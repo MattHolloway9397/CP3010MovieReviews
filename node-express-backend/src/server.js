@@ -6,7 +6,29 @@ import { fileURLToPath } from 'url';
 import multer from 'multer';
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import bodyParser from 'body-parser'
+import mongoose from 'mongoose'
+
+
+
+const infoSchenma = new mongoose.Schema({
+  name: String,
+  sport: String,
+  movie: String,
+  email: {type: String, required: true}
+})
+
+
+const Info = mongoose.model('Info', infoSchenma);
+
+
 dotenv.config()
+
+
+async function main() {
+  await mongoose.connect(process.env.MONGO_CONNECT + '/customers')
+}
+
+main();
 
 const jsonParser = bodyParser.json()
 
@@ -35,8 +57,29 @@ console.log(movieData);
     {"title":"Terminator 2"},
     {"title":"Rocky IV"},
     {"title":"Titanic"},
-    {"title":"Die Hard"}
+    {"title":"Die Hard"}npm i
 ];*/
+
+
+
+app.post('/api/addInfo', jsonParser, async (req,res) => {
+  
+  const custInfo = new Info(req.body)
+
+  try{
+  await custInfo.save();
+  }
+
+  catch(err){
+  res.sendStatus(206);
+  return;
+  }
+
+  res.sendStatus(200);
+
+})
+
+
 
 app.get('/api/movies', async (req, res) => {
     
